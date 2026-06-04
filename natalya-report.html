@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sculpt Division — Head Teacher Weekly Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; color: #1c1c1e; font-size: 14px; min-height: 100vh; }
+
+  .app-header { background: #1d1d1b; color: #fff; padding: 0 20px; height: 54px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #333; }
+  .logo-fallback { height: 34px; width: 34px; border-radius: 6px; background: #a79773; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #fff; flex-shrink: 0; }
+  .app-header .title { color: #fff; font-size: 1rem; font-weight: 600; }
+  .app-header .subtitle { color: rgba(255,255,255,0.45); font-size: 0.8rem; margin-left: 4px; }
+
+  .page { max-width: 900px; margin: 0 auto; padding: 24px 20px 80px; }
+
+  .card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .card-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #a79773; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #f0f1f5; display: flex; align-items: center; justify-content: space-between; }
+  .card-tag { font-size: 0.68rem; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Week nav */
+  .week-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .week-nav-label { font-size: 0.875rem; font-weight: 600; color: #1c1c1e; text-align: center; flex: 1; }
+  .week-arrow { padding: 5px 12px; border-radius: 6px; border: 1px solid #e5e5ea; background: #fff; cursor: pointer; font-size: 16px; line-height: 1; color: #6c6c70; transition: all 0.12s; font-family: inherit; }
+  .week-arrow:hover { border-color: #a79773; color: #a79773; }
+
+  /* Form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-item label { display: block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #6c6c70; margin-bottom: 5px; }
+  .form-item input, .form-item textarea, .form-item select { width: 100%; border: 1px solid #e5e5ea; border-radius: 6px; padding: 8px 10px; font-family: inherit; font-size: 0.875rem; color: #1c1c1e; background: #fff; outline: none; resize: vertical; }
+  .form-item input:focus, .form-item textarea:focus, .form-item select:focus { border-color: #a79773; }
+  .form-item.full { grid-column: 1 / -1; }
+
+  /* Meetings */
+  .meeting-row { display: grid; grid-template-columns: 1fr 110px 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .meeting-row input { border: 1px solid #e5e5ea; border-radius: 6px; padding: 7px 10px; font-family: inherit; font-size: 0.875rem; color: #1c1c1e; outline: none; width: 100%; }
+  .meeting-row input:focus { border-color: #a79773; }
+
+  /* Buttons */
+  .btn-gold { background: #a79773; color: #fff; border: none; border-radius: 6px; padding: 7px 16px; font-family: inherit; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; transition: background 0.12s; }
+  .btn-gold:hover { background: #8f7f5f; }
+  .btn-outline { background: transparent; color: #6c6c70; border: 1px solid #e5e5ea; border-radius: 6px; padding: 7px 14px; font-family: inherit; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; transition: all 0.12s; }
+  .btn-outline:hover { border-color: #a79773; color: #a79773; }
+  .remove-btn { background: none; border: none; color: #d1d1d6; cursor: pointer; font-size: 15px; padding: 2px 5px; transition: color 0.12s; line-height: 1; }
+  .remove-btn:hover { color: #ff3b30; }
+  .no-items { font-size: 0.82rem; color: #aaa; font-style: italic; margin-bottom: 8px; }
+
+  /* Calendar */
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-month { font-size: 1rem; font-weight: 700; color: #1c1c1e; }
+  .cal-nav { display: flex; gap: 8px; }
+  .cal-nav button { background: #fff; border: 1px solid #e5e5ea; border-radius: 6px; padding: 5px 12px; font-family: inherit; font-size: 0.82rem; cursor: pointer; color: #6c6c70; transition: all 0.12s; }
+  .cal-nav button:hover { border-color: #a79773; color: #a79773; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-day-label { text-align: center; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; padding: 6px 0 10px; }
+  .cal-cell { min-height: 72px; background: #fff; border: 1px solid #e5e5ea; border-radius: 8px; padding: 6px 8px; cursor: pointer; transition: border-color 0.12s; position: relative; }
+  .cal-cell:hover { border-color: #a79773; }
+  .cal-cell.other-month { background: #f9f9f9; opacity: 0.45; cursor: default; }
+  .cal-cell.other-month:hover { border-color: #e5e5ea; }
+  .cal-cell.today { border-color: #a79773; }
+  .cal-date { font-size: 0.75rem; font-weight: 600; color: #6c6c70; margin-bottom: 3px; }
+  .cal-cell.today .cal-date { color: #a79773; }
+  .cal-dots { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px; }
+  .cal-dot { height: 18px; padding: 0 5px; border-radius: 4px; background: #a79773; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; color: #fff; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+  /* Log panel */
+  .log-panel { background: #f9fafb; border: 1px solid #e5e5ea; border-radius: 8px; padding: 14px 16px; margin-top: 16px; }
+  .log-panel-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #a79773; margin-bottom: 10px; }
+  .log-entry { background: #fff; border: 1px solid #e5e5ea; border-radius: 7px; padding: 10px 12px; margin-bottom: 8px; }
+  .log-entry-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .log-entry-name { font-weight: 600; font-size: 0.875rem; }
+  .log-entry-notes { font-size: 0.82rem; color: #6c6c70; line-height: 1.5; }
+  .log-empty { font-size: 0.82rem; color: #aaa; font-style: italic; margin-bottom: 10px; }
+
+  /* Instructor pills */
+  .instructor-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .instructor-pill { display: flex; align-items: center; gap: 6px; background: #f0f2f5; border: 1px solid #e5e5ea; border-radius: 6px; padding: 5px 10px; font-size: 0.82rem; }
+
+  /* Submit */
+  .submit-area { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+  .save-msg { font-size: 0.78rem; color: #34c759; opacity: 0; transition: opacity 0.3s; }
+  .save-msg.show { opacity: 1; }
+  .btn-submit { background: #a79773; color: #fff; border: none; border-radius: 6px; padding: 12px 32px; font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.12s; }
+  .btn-submit:hover { background: #8f7f5f; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 12px; padding: 24px; width: 460px; max-width: 95vw; box-shadow: 0 8px 32px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #a79773; margin-bottom: 6px; }
+  .modal-date { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: #1c1c1e; }
+  .modal-row { display: flex; flex-direction: column; gap: 6px; padding: 12px; background: #f9f9f9; border: 1px solid #e5e5ea; border-radius: 8px; position: relative; margin-bottom: 8px; }
+  .modal-row select, .modal-row textarea { width: 100%; border: 1px solid #e5e5ea; border-radius: 6px; padding: 8px 10px; font-family: inherit; font-size: 0.875rem; color: #1c1c1e; outline: none; resize: vertical; background: #fff; }
+  .modal-row select:focus, .modal-row textarea:focus { border-color: #a79773; }
+  .modal-row-remove { position: absolute; top: 6px; right: 8px; background: none; border: none; color: #d1d1d6; font-size: 15px; cursor: pointer; line-height: 1; padding: 2px 4px; }
+  .modal-row-remove:hover { color: #ff3b30; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1d1d1b; color: #fff; padding: 10px 18px; border-radius: 7px; font-size: 0.82rem; border-left: 3px solid #a79773; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .meeting-row { grid-template-columns: 1fr 1fr; }
+    .cal-cell { min-height: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="logo-fallback">SD</div>
+  <span class="title">Sculpt Division</span>
+  <span class="subtitle">Head Teacher Weekly Report</span>
+</div>
+
+<div class="page">
+
+  <!-- Week -->
+  <div class="card">
+    <div class="card-title">Reporting Week</div>
+    <div class="week-nav">
+      <button class="week-arrow" onclick="navigateWeek(-1)">&#8249;</button>
+      <div class="week-nav-label" id="weekRangeDisplay">—</div>
+      <button class="week-arrow" onclick="navigateWeek(1)">&#8250;</button>
+    </div>
+  </div>
+
+  <!-- Admin Hours -->
+  <div class="card">
+    <div class="card-title">Admin Hours <span class="card-tag">3 hrs weekly</span></div>
+    <div class="form-item">
+      <label>What was completed this week</label>
+      <textarea id="adminNotes" rows="4" placeholder="Describe what you worked on during your 3 admin hours..." oninput="autosave()"></textarea>
+    </div>
+  </div>
+
+  <!-- Class Observation -->
+  <div class="card">
+    <div class="card-title">Class Observation <span class="card-tag">Weekly requirement</span></div>
+    <div id="observationList"></div>
+    <button class="btn-outline" onclick="addObservation()" style="margin-top:8px">+ Add class</button>
+  </div>
+
+  <!-- Meetings -->
+  <div class="card">
+    <div class="card-title">Meetings <span class="card-tag">This week</span></div>
+    <div id="meetingList"></div>
+    <button class="btn-outline" onclick="addMeeting()" style="margin-top:8px">+ Add meeting</button>
+  </div>
+
+  <!-- Check-in Calendar -->
+  <div class="card">
+    <div class="card-title">1:1 Teacher Check-ins <span class="card-tag">Calendar log</span></div>
+    <div class="cal-header">
+      <div class="cal-month" id="calMonthLabel"></div>
+      <div class="cal-nav">
+        <button onclick="changeMonth(-1)">‹ Prev</button>
+        <button onclick="changeMonth(1)">Next ›</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div id="logPanel" style="display:none;margin-top:16px">
+      <div class="log-panel">
+        <div class="log-panel-title" id="logPanelTitle"></div>
+        <div id="logPanelEntries"></div>
+        <button class="btn-gold" onclick="openAddModal()" style="margin-top:4px">+ Log check-in</button>
+      </div>
+    </div>
+
+    <!-- Manage instructors -->
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f0f1f5">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#aaa;margin-bottom:10px">Manage Instructors</div>
+      <div class="instructor-pills" id="instructorPills"></div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="newInstructorInput" placeholder="Add instructor name..." onkeydown="if(event.key==='Enter')addInstructor()" style="flex:1;border:1px solid #e5e5ea;border-radius:6px;padding:7px 10px;font-family:inherit;font-size:0.875rem;color:#1c1c1e;outline:none;">
+        <button class="btn-gold" onclick="addInstructor()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-area">
+    <span class="save-msg" id="saveMsg">Draft saved</span>
+    <button class="btn-outline" onclick="saveDraft()">Save draft</button>
+    <button class="btn-submit" onclick="submitReport()">Download Report ↓</button>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-title">Log Teacher Check-ins</div>
+    <div class="modal-date" id="modalDateLabel"></div>
+    <div id="modalRows"></div>
+    <button class="btn-outline" onclick="addModalRow()" style="width:100%;margin-bottom:4px">+ Add another instructor</button>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-gold" onclick="saveCheckins()">Save check-ins</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DEFAULT_TEACHERS = [
+  "Alberto D'Agostino","Alicia Morgan","Imogen Hudson","Jess McCall",
+  "Kathleen Schlenker","Jenna Kenny","Mila Dattler","Victoria Alexandou","Louise Odelberg"
+];
+
+let teachers = [];
+let checkinLog = [];
+let meetings = [];
+let observations = [{instructor:'',cls:'',time:'',rating:'',notes:''}];
+let currentWeekKey = '';
+let currentMonday = null;
+let calYear, calMonth;
+let selectedCalDate = null;
+
+// ── Storage ──
+function loadTeachers() { const t = localStorage.getItem('natalya-teachers'); teachers = t ? JSON.parse(t) : [...DEFAULT_TEACHERS]; }
+function saveTeachers() { localStorage.setItem('natalya-teachers', JSON.stringify(teachers)); }
+function loadCheckinLog() { const d = localStorage.getItem('natalya-checkin-log'); checkinLog = d ? JSON.parse(d) : []; }
+function saveCheckinLog() { localStorage.setItem('natalya-checkin-log', JSON.stringify(checkinLog)); }
+
+// ── Dates ──
+function getMonday(d) {
+  const date = new Date(d); const day = date.getDay();
+  date.setDate(date.getDate() - day + (day === 0 ? -6 : 1)); return date;
+}
+function toISO(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function formatDate(d) { return d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }); }
+
+// ── Week navigation ──
+function setWeek(monday) {
+  currentMonday = monday;
+  const mondayISO = toISO(monday);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+  document.getElementById('weekRangeDisplay').textContent = formatDate(monday) + ' — ' + formatDate(sunday);
+  currentWeekKey = 'natalya-report-' + mondayISO;
+  loadWeekData();
+}
+
+function navigateWeek(dir) {
+  if (!currentMonday) return;
+  autosave();
+  const next = new Date(currentMonday); next.setDate(currentMonday.getDate() + dir * 7);
+  setWeek(next);
+}
+
+function loadWeekData() {
+  const saved = localStorage.getItem(currentWeekKey);
+  if (saved) {
+    const d = JSON.parse(saved);
+    meetings = d.meetings || [];
+document.getElementById('adminNotes').value = d.adminNotes || '';
+    observations = d.observations || [{instructor:'',cls:'',time:'',rating:'',notes:''}];
+  } else {
+    observations = [{instructor:'',cls:'',time:'',rating:'',notes:''}];
+    meetings = [];
+    document.getElementById('adminNotes').value = '';
+  }
+  renderObservations();
+  renderMeetings();
+}
+
+function getWeekData() {
+  return {
+adminNotes: document.getElementById('adminNotes').value,
+    observations,
+    meetings
+  };
+}
+
+function autosave() { if (currentWeekKey) localStorage.setItem(currentWeekKey, JSON.stringify(getWeekData())); }
+function saveDraft() {
+  autosave();
+  const msg = document.getElementById('saveMsg'); msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 2000);
+}
+
+// ── Obs instructor dropdown ──
+function populateObsInstructor() { renderObservations(); }
+
+// ── Observations ──
+const CLASS_OPTIONS = ['Pilates Sculpt','Pilates Align','Pilates and Breath','Ignite Reformer','Ignite + Reformer','Unwind','Base','Dynamic'];
+const RATING_OPTIONS = ['Excellent','Good','Satisfactory','Needs improvement','Unsatisfactory'];
+
+function renderObservations() {
+  const list = document.getElementById('observationList'); list.innerHTML = '';
+  observations.forEach((obs, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #f0f1f5;position:relative;';
+    if (observations.length > 1) {
+      const rm = document.createElement('button');
+      rm.className = 'remove-btn'; rm.textContent = '×';
+      rm.style.cssText = 'position:absolute;top:0;right:0;';
+      rm.onclick = () => { observations.splice(i,1); renderObservations(); autosave(); };
+      wrap.appendChild(rm);
+    }
+    const grid = document.createElement('div'); grid.className = 'form-grid';
+
+    // Instructor
+    const instItem = document.createElement('div'); instItem.className = 'form-item';
+    const instLabel = document.createElement('label'); instLabel.textContent = 'Instructor observed';
+    const instSel = document.createElement('select');
+    instSel.innerHTML = '<option value="">Select instructor</option>';
+    teachers.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; if(obs.instructor===t) o.selected=true; instSel.appendChild(o); });
+    instSel.onchange = () => { observations[i].instructor = instSel.value; autosave(); };
+    instItem.appendChild(instLabel); instItem.appendChild(instSel); grid.appendChild(instItem);
+
+    // Class
+    const clsItem = document.createElement('div'); clsItem.className = 'form-item';
+    const clsLabel = document.createElement('label'); clsLabel.textContent = 'Class type';
+    const clsSel = document.createElement('select');
+    clsSel.innerHTML = '<option value="">Select class</option>';
+    CLASS_OPTIONS.forEach(c => { const o = document.createElement('option'); o.value=c; o.textContent=c; if(obs.cls===c) o.selected=true; clsSel.appendChild(o); });
+    clsSel.onchange = () => { observations[i].cls = clsSel.value; autosave(); };
+    clsItem.appendChild(clsLabel); clsItem.appendChild(clsSel); grid.appendChild(clsItem);
+
+    // Time
+    const timeItem = document.createElement('div'); timeItem.className = 'form-item';
+    const timeLabel = document.createElement('label'); timeLabel.textContent = 'Day & time';
+    const timeInput = document.createElement('input'); timeInput.type='text'; timeInput.placeholder='e.g. Tuesday 6:00am'; timeInput.value=obs.time||'';
+    timeInput.oninput = () => { observations[i].time = timeInput.value; autosave(); };
+    timeItem.appendChild(timeLabel); timeItem.appendChild(timeInput); grid.appendChild(timeItem);
+
+    // Rating
+    const ratItem = document.createElement('div'); ratItem.className = 'form-item';
+    const ratLabel = document.createElement('label'); ratLabel.textContent = 'Overall rating';
+    const ratSel = document.createElement('select');
+    ratSel.innerHTML = '<option value="">Select rating</option>';
+    RATING_OPTIONS.forEach(r => { const o = document.createElement('option'); o.value=r; o.textContent=r; if(obs.rating===r) o.selected=true; ratSel.appendChild(o); });
+    ratSel.onchange = () => { observations[i].rating = ratSel.value; autosave(); };
+    ratItem.appendChild(ratLabel); ratItem.appendChild(ratSel); grid.appendChild(ratItem);
+
+    // Notes
+    const notesItem = document.createElement('div'); notesItem.className = 'form-item full';
+    const notesLabel = document.createElement('label'); notesLabel.textContent = 'Observation notes & feedback given';
+    const notesTa = document.createElement('textarea'); notesTa.rows=3; notesTa.placeholder='What did you observe? What feedback did you give the instructor?'; notesTa.value=obs.notes||'';
+    notesTa.oninput = () => { observations[i].notes = notesTa.value; autosave(); };
+    notesItem.appendChild(notesLabel); notesItem.appendChild(notesTa); grid.appendChild(notesItem);
+
+    wrap.appendChild(grid);
+    if (i === observations.length - 1) wrap.style.borderBottom = 'none';
+    list.appendChild(wrap);
+  });
+}
+
+function addObservation() {
+  observations.push({instructor:'',cls:'',time:'',rating:'',notes:''});
+  renderObservations();
+}
+
+// ── Meetings ──
+function renderMeetings() {
+  const list = document.getElementById('meetingList'); list.innerHTML = '';
+  if (!meetings.length) { list.innerHTML = '<div class="no-items">No meetings logged this week.</div>'; return; }
+  meetings.forEach((m, i) => {
+    const row = document.createElement('div'); row.className = 'meeting-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Meeting name / purpose" value="${(m.name||'').replace(/"/g,'&quot;')}" oninput="meetings[${i}].name=this.value;autosave()">
+      <input type="text" placeholder="Day & time" value="${(m.time||'').replace(/"/g,'&quot;')}" oninput="meetings[${i}].time=this.value;autosave()">
+      <input type="text" placeholder="Attendees / notes" value="${(m.notes||'').replace(/"/g,'&quot;')}" oninput="meetings[${i}].notes=this.value;autosave()">
+      <button class="remove-btn" onclick="removeMeeting(${i})">×</button>`;
+    list.appendChild(row);
+  });
+}
+function addMeeting() { meetings.push({name:'',time:'',notes:''}); renderMeetings(); }
+function removeMeeting(i) { meetings.splice(i,1); renderMeetings(); autosave(); }
+
+// ── Calendar ──
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth=0; calYear++; }
+  if (calMonth < 0) { calMonth=11; calYear--; }
+  renderCal();
+}
+
+function renderCal() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
+  const grid = document.getElementById('calGrid'); grid.innerHTML = '';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => {
+    const lbl = document.createElement('div'); lbl.className = 'cal-day-label'; lbl.textContent = d; grid.appendChild(lbl);
+  });
+  const first = new Date(calYear, calMonth, 1);
+  let startDay = first.getDay() - 1; if (startDay < 0) startDay = 6;
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  const today = toISO(new Date());
+  const totalCells = Math.ceil((startDay + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    let date, isOther = false;
+    if (i < startDay) { date = new Date(calYear, calMonth-1, prevDays - startDay + i + 1); isOther = true; }
+    else if (i >= startDay + daysInMonth) { date = new Date(calYear, calMonth+1, i - startDay - daysInMonth + 1); isOther = true; }
+    else { date = new Date(calYear, calMonth, i - startDay + 1); }
+    const iso = toISO(date);
+    cell.className = 'cal-cell' + (isOther ? ' other-month' : '') + (iso === today ? ' today' : '') + (iso === selectedCalDate ? ' today' : '');
+    const dateDiv = document.createElement('div'); dateDiv.className = 'cal-date'; dateDiv.textContent = date.getDate(); cell.appendChild(dateDiv);
+    if (!isOther) {
+      const dayCheckins = checkinLog.filter(c => c.date === iso);
+      if (dayCheckins.length) {
+        const dots = document.createElement('div'); dots.className = 'cal-dots';
+        dayCheckins.forEach(c => {
+          const dot = document.createElement('div'); dot.className = 'cal-dot';
+          dot.textContent = c.teacher.split(' ').map(w=>w[0]).slice(0,2).join('');
+          dot.title = c.teacher; dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
+      }
+      cell.onclick = () => selectDate(iso);
+    }
+    grid.appendChild(cell);
+  }
+  if (selectedCalDate) showLogPanel(selectedCalDate);
+}
+
+function selectDate(iso) { selectedCalDate = iso; showLogPanel(iso); renderCal(); }
+
+function showLogPanel(iso) {
+  const panel = document.getElementById('logPanel'); panel.style.display = 'block';
+  const d = new Date(iso + 'T12:00:00');
+  document.getElementById('logPanelTitle').textContent = d.toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const entries = document.getElementById('logPanelEntries'); entries.innerHTML = '';
+  const dayCheckins = checkinLog.filter(c => c.date === iso);
+  if (!dayCheckins.length) { entries.innerHTML = '<div class="log-empty">No check-ins logged for this day.</div>'; return; }
+  dayCheckins.forEach(c => {
+    const entry = document.createElement('div'); entry.className = 'log-entry';
+    entry.innerHTML = `
+      <div class="log-entry-header">
+        <div class="log-entry-name">${c.teacher}</div>
+        <button class="remove-btn" onclick="deleteCheckin('${c.id}')">×</button>
+      </div>
+      <div class="log-entry-notes">${c.notes || '<span style="color:#aaa;font-style:italic">No notes</span>'}</div>`;
+    entries.appendChild(entry);
+  });
+}
+
+// ── Modal ──
+function addModalRow() {
+  const rows = document.getElementById('modalRows');
+  const row = document.createElement('div'); row.className = 'modal-row';
+  const sel = document.createElement('select');
+  sel.innerHTML = '<option value="">Select instructor</option>';
+  teachers.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; sel.appendChild(o); });
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'Notes from check-in (optional)'; ta.rows = 2;
+  const removeBtn = document.createElement('button');
+  removeBtn.textContent = '×'; removeBtn.className = 'modal-row-remove';
+  removeBtn.onclick = () => { if (rows.children.length > 1) rows.removeChild(row); };
+  row.appendChild(removeBtn); row.appendChild(sel); row.appendChild(ta);
+  rows.appendChild(row);
+}
+
+function openAddModal() {
+  if (!selectedCalDate) return;
+  const d = new Date(selectedCalDate + 'T12:00:00');
+  document.getElementById('modalDateLabel').textContent = d.toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('modalRows').innerHTML = '';
+  addModalRow();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalOnOverlay(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+function saveCheckins() {
+  const rows = document.getElementById('modalRows').children;
+  let saved = 0;
+  Array.from(rows).forEach(row => {
+    const sel = row.querySelector('select');
+    const ta = row.querySelector('textarea');
+    if (!sel || !sel.value) return;
+    checkinLog.push({ id: Date.now().toString() + Math.random(), date: selectedCalDate, teacher: sel.value, notes: ta ? ta.value.trim() : '' });
+    saved++;
+  });
+  if (!saved) { showToast('Please select at least one instructor'); return; }
+  saveCheckinLog();
+  closeModal();
+  showLogPanel(selectedCalDate);
+  renderCal();
+  showToast(saved === 1 ? 'Check-in logged' : saved + ' check-ins logged');
+}
+
+function deleteCheckin(id) {
+  if (!confirm('Delete this check-in?')) return;
+  checkinLog = checkinLog.filter(c => c.id !== id);
+  saveCheckinLog(); showLogPanel(selectedCalDate); renderCal();
+}
+
+// ── Instructor management ──
+function renderInstructorPills() {
+  const list = document.getElementById('instructorPills'); list.innerHTML = '';
+  teachers.forEach(name => {
+    const pill = document.createElement('div'); pill.className = 'instructor-pill';
+    pill.innerHTML = `<span>${name}</span><button class="remove-btn" style="font-size:13px" onclick="removeInstructor('${name.replace(/'/g,"\\'")}')">×</button>`;
+    list.appendChild(pill);
+  });
+}
+
+function addInstructor() {
+  const input = document.getElementById('newInstructorInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (teachers.includes(name)) { showToast('Already on the list'); return; }
+  teachers.push(name); saveTeachers(); input.value = '';
+  renderInstructorPills(); populateObsInstructor();
+  showToast(name + ' added');
+}
+
+function removeInstructor(name) {
+  if (!confirm('Remove ' + name + '?')) return;
+  teachers = teachers.filter(t => t !== name); saveTeachers();
+  renderInstructorPills(); populateObsInstructor();
+}
+
+// ── Submit ──
+function submitReport() {
+  if (!currentWeekKey) { showToast('No week selected'); return; }
+  const d = getWeekData();
+  const week = document.getElementById('weekRangeDisplay').textContent;
+
+  const weekStart = new Date(currentWeekKey.replace('natalya-report-','') + 'T00:00:00');
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6);
+  const weekCheckins = checkinLog.filter(c => { const d2 = new Date(c.date+'T00:00:00'); return d2 >= weekStart && d2 <= weekEnd; });
+
+  const checkinRows = weekCheckins.length
+    ? weekCheckins.map(c => `<tr><td style="padding:8px 12px;border-bottom:1px solid #f0f1f5;font-size:13px;color:#1c1c1e">${c.teacher}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f1f5;font-size:13px;color:#6c6c70">${c.date}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f1f5;font-size:13px;color:#6c6c70">${c.notes||'—'}</td></tr>`).join('')
+    : '<tr><td colspan="3" style="padding:8px 12px;color:#aaa;font-style:italic">No check-ins logged this week.</td></tr>';
+
+  const meetingRows = meetings.length
+    ? meetings.map(m => `<tr><td style="padding:8px 12px;border-bottom:1px solid #f0f1f5;font-size:13px;color:#1c1c1e">${m.name||'—'}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f1f5;font-size:13px;color:#6c6c70">${m.time||'—'}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f1f5;font-size:13px;color:#6c6c70">${m.notes||'—'}</td></tr>`).join('')
+    : '<tr><td colspan="3" style="padding:8px 12px;color:#aaa;font-style:italic">No meetings this week.</td></tr>';
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Sculpt Division Report — ${week}</title><style>
+    body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#f0f2f5;color:#1c1c1e;margin:0;padding:32px 20px;font-size:13px;} *{font-size:inherit;}
+    .wrap{max-width:700px;margin:0 auto;}
+    .header{background:#1d1d1b;color:#fff;padding:20px 24px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:12px;}
+    .logo{width:36px;height:36px;border-radius:7px;background:#a79773;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;}
+    .header-text h1{font-size:16px;font-weight:700;margin:0;}
+    .header-text p{font-size:12px;color:rgba(255,255,255,0.5);margin:2px 0 0;}
+    .week-bar{background:#a79773;color:#fff;padding:10px 24px;font-size:13px;font-weight:600;}
+    .card{background:#fff;padding:20px 24px;margin-bottom:2px;}
+    .card:last-child{border-radius:0 0 10px 10px;}
+    .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#a79773;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0f1f5;}
+    .field-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#6c6c70;margin-bottom:4px;}
+    .field-value{font-size:13px;color:#1c1c1e;line-height:1.6;margin-bottom:14px;}
+    table{width:100%;border-collapse:collapse;}
+    th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;padding:6px 12px;background:#f9fafb;}
+    .no-print{display:none;}
+  </style></head><body><div class="wrap">
+    <div class="header"><div class="logo">SD</div><div class="header-text"><h1>Sculpt Division</h1><p>Head Teacher Weekly Report</p></div></div>
+    <div class="week-bar">Week: ${week}</div>
+    <div class="card">
+      <div class="section-title">Admin Hours</div>
+      <div class="field-label">What was completed this week</div>
+      <div class="field-value">${(d.adminNotes||'Not entered').split('\n').join('<br>')}</div>
+    </div>
+    <div class="card">
+      <div class="section-title">1:1 Teacher Check-ins This Week</div>
+      <table><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;padding:6px 12px;background:#f9fafb;">Instructor</th><th style="text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;padding:6px 12px;background:#f9fafb;">Date</th><th style="text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;padding:6px 12px;background:#f9fafb;">Notes</th></tr></thead><tbody>${checkinRows}</tbody></table>
+    </div>
+    <div class="card">
+      <div class="section-title">Class Observations</div>
+      ${(d.observations||[]).map((obs,i) => `
+        ${i > 0 ? '<hr style="border:none;border-top:1px solid #f0f1f5;margin:12px 0">' : ''}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px">
+          <div><div class="field-label">Instructor</div><div class="field-value">${obs.instructor||'Not entered'}</div></div>
+          <div><div class="field-label">Class</div><div class="field-value">${obs.cls||'Not entered'}</div></div>
+          <div><div class="field-label">Day & time</div><div class="field-value">${obs.time||'Not entered'}</div></div>
+          <div><div class="field-label">Rating</div><div class="field-value">${obs.rating||'Not entered'}</div></div>
+        </div>
+        <div class="field-label">Notes</div>
+        <div class="field-value">${(obs.notes||'Not entered').split('\n').join('<br>')}</div>
+      `).join('')}
+    </div>
+    <div class="card">
+      <div class="section-title">Meetings</div>
+      <table><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;padding:6px 12px;background:#f9fafb;">Meeting</th><th style="text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;padding:6px 12px;background:#f9fafb;">Day & time</th><th style="text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;padding:6px 12px;background:#f9fafb;">Attendees / notes</th></tr></thead><tbody>${meetingRows}</tbody></table>
+    </div>
+  </div></body></html>`;
+
+  const blob = new Blob([html], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Sculpt_Report_' + currentWeekKey.replace('natalya-report-','') + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Report downloaded ✓');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── Init ──
+function init() {
+  loadTeachers(); loadCheckinLog();
+  const now = new Date();
+  calYear = now.getFullYear(); calMonth = now.getMonth();
+  setWeek(getMonday(now));
+  renderInstructorPills();
+  renderCal();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
